@@ -9,8 +9,9 @@ public class Piece : MonoBehaviour {
     private bool isBeingManipulated;
 
     private Link potentialLink;
+    private GameObject lineGameObject;
+    public Material snapLineMaterial;
 
-    // Use this for initialization
     void Start ()
     {
         snapPoints = GetComponentsInChildren<Collider>();
@@ -53,8 +54,41 @@ public class Piece : MonoBehaviour {
         //I will do this in a tree structure in order to use Unity's gameobject
         //hierarchy
         targetPiece.transform.parent = potentialLink.origin.transform;
-        targetPiece.transform.localPosition = Vector3.zero;
+        targetPiece.transform.rotation = Quaternion.Inverse(potentialLink.origin.transform.rotation);
+        targetPiece.transform.position += potentialLink.origin.transform.position - potentialLink.target.transform.position;
 
         potentialLink = null;
+    }
+
+    void DrawLine(Vector3 start, Vector3 end)
+    {
+        if (lineGameObject) { RemoveLine(); }
+        lineGameObject = new GameObject();
+        lineGameObject.transform.position = start;
+        LineRenderer lr = lineGameObject.AddComponent<LineRenderer>();
+        lr.material = new Material(Shader.Find("k014/SnapLineShader"));
+        lr.receiveShadows = false;
+        lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        lr.startWidth = 0.1f;
+        lr.endWidth = 0.1f;
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+    }
+
+    private void RemoveLine()
+    {
+        GameObject.Destroy(lineGameObject);
+    }
+
+    private void Update()
+    {
+        if (potentialLink != null)
+        {
+            DrawLine(potentialLink.origin.transform.position, potentialLink.target.transform.position);
+        }
+        else
+        {
+            RemoveLine();
+        }
     }
 }
