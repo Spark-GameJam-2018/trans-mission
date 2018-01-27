@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GrabBehaviour : MonoBehaviour {
 
+    public static string STOP_GRABBING = "STOP_GRABBING";
+
     Piece selectedPiece;
     float selectedPieceDistance;
 
@@ -31,18 +33,19 @@ public class GrabBehaviour : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && !selectedPiece)
         {
             selectedPiece = getPiece();
+            if (!selectedPiece) { return; }
+            selectedPieceDistance = (Camera.main.transform.position - selectedPiece.transform.position).magnitude;
         }
         else if (Input.GetMouseButtonUp(0) && selectedPiece)
         {
-            selectedPiece.isBeingManipulated = false;
+            selectedPiece.StopManipulation();
             selectedPiece = null;
+            EventManager.TriggerEvent(STOP_GRABBING, null);
         }
 
         if (!selectedPiece) { return; }
 
-        selectedPiece.isBeingManipulated = true;
-        selectedPieceDistance = (Camera.main.transform.position - selectedPiece.transform.position).magnitude;
+        selectedPiece.StartManipulation();
         selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
-
     }
 }
