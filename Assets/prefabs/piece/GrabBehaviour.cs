@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,10 +43,41 @@ public class GrabBehaviour : MonoBehaviour {
             selectedPiece = null;
             EventManager.TriggerEvent(STOP_GRABBING, null);
         }
+        if (Input.GetKeyDown(KeyCode.R) && selectedPiece)
+        {
+            RotatePieceX();
+        }
+        if (Input.GetKeyDown(KeyCode.F) && selectedPiece)
+        {
+            RotatePieceY();
+        }
 
         if (!selectedPiece) { return; }
 
         selectedPiece.StartManipulation();
         selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
+    }
+
+    private void RotatePieceX()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            selectedPiece.Rotate(0, 90, 0);
+        }
+        else
+        {
+            selectedPiece.Rotate(0, -90, 0);
+        }
+    }
+    private void RotatePieceY()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            selectedPiece.Rotate(0, 0, 90);
+        }
+        else
+        {
+            selectedPiece.Rotate(0, 0, -90);
+        }
     }
 }

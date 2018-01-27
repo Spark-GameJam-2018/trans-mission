@@ -53,8 +53,12 @@ public class Piece : MonoBehaviour {
         //at this point we have our child piece that needs to be snapped
         //I will do this in a tree structure in order to use Unity's gameobject
         //hierarchy
+        //        targetPiece.transform.parent = potentialLink.origin.transform;
+        //        targetPiece.transform.rotation = Quaternion.Inverse(potentialLink.origin.transform.rotation);
+        //        targetPiece.transform.position += potentialLink.origin.transform.position - potentialLink.target.transform.position;
+
+        Debug.Log("Liam: " + potentialLink.origin.transform);
         targetPiece.transform.parent = potentialLink.origin.transform;
-        targetPiece.transform.rotation = Quaternion.Inverse(potentialLink.origin.transform.rotation);
         targetPiece.transform.position += potentialLink.origin.transform.position - potentialLink.target.transform.position;
 
         potentialLink = null;
@@ -78,6 +82,11 @@ public class Piece : MonoBehaviour {
     private void RemoveLine()
     {
         GameObject.Destroy(lineGameObject);
+    }
+
+    public void Rotate(float x, float y, float z)
+    {
+        transform.Rotate(x, y, z);
     }
 
     private void Update()
