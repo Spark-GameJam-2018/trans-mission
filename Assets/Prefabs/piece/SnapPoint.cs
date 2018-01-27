@@ -9,6 +9,7 @@ public class SnapPoint : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         Piece piece = getPieceInCollision(other);
+        if(piece == parentPiece) { return; }
         parentPiece.addPotentialPiece(piece);
     }
 
