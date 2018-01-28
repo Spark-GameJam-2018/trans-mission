@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class SnapGroup : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	public List<Piece> Pieces
+    {
+        get
+        {
+            return new List<Piece>(GetComponentsInChildren<Piece>());
+        }
+    }
+
+    public bool IsEmpty
+    {
+        get
+        {
+            return Pieces.Count == 0;
+        }
+    }
 }

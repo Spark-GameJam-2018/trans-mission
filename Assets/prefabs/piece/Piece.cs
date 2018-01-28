@@ -39,6 +39,15 @@ public class Piece : MonoBehaviour {
         EventManager.StartListening(GrabBehaviour.STOP_GRABBING, StopGrabbingPieceHandler);
 	}
 
+    public Transform GetTargetTransform()
+    {
+        if (SnapGroup)
+        {
+            return SnapGroup.transform;
+        }
+        return transform;
+    }
+
     public void addPotentialLink(SnapPoint origin, SnapPoint target)
     {
         if (isBeingManipulated) return;
