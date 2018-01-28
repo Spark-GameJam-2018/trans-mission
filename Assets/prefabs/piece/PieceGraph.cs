@@ -8,7 +8,7 @@ using UnityEngine;
 public class PieceGraph : MonoBehaviour, IGraph<Piece> {
 
     public List<Piece> pieces;
-    private Graph<Piece> pieceGraph;
+    private Graph<Piece> pieceGraph = new Graph<Piece>();
 
     public void AddDirectedEdge(GraphNode<Piece> from, GraphNode<Piece> to, int cost)
     {
@@ -69,10 +69,4 @@ public class PieceGraph : MonoBehaviour, IGraph<Piece> {
 
         return visited;
     }
-
-    // Use this for initialization
-    void Start () {
-        pieceGraph = new Graph<Piece>();
-	}
-
 }

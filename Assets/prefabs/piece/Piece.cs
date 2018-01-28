@@ -14,12 +14,13 @@ public class Piece : MonoBehaviour {
 
     // Linked objects graph container.
     // Graph of linked pieces share the same linkedObjectParent.
-    public PieceGraph pieceGraph;
+    private PieceGraph pieceGraph;
     // Node representing this piece in the graph.
     private GraphNode<Piece> node;
 
     void Start ()
     {
+        pieceGraph = GetComponentInParent<PieceGraph>();
         RegisterNode();
         snapPoints = GetComponentsInChildren<Collider>();
 
