@@ -31,53 +31,81 @@ public class GrabBehaviour : MonoBehaviour {
 
 
     void Update () {
-        if (Input.GetMouseButtonDown(0) && !selectedPiece)
+
+        if (!selectedPiece)
         {
-            selectedPiece = getPiece();
-            if (!selectedPiece) { return; }
-            selectedPieceDistance = (Camera.main.transform.position - selectedPiece.transform.position).magnitude;
+            CheckSelectPiece();
         }
-        else if (Input.GetMouseButtonUp(0) && selectedPiece)
+        else
+        {
+            CheckDeselectPiece();
+            CheckRotatePiece();
+        }
+
+        // If piece is selected then update piece position.
+        if (selectedPiece)
+        {
+            UpdatePiecePosition();
+        }
+    }
+
+    private void UpdatePiecePosition()
+    {
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            // May want to include graph manipulation to support use cases of snapping parts of the graph to each other.
+            selectedPiece.TransformConnectedNodes(Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance);
+        }
+        else
+        {
+            selectedPiece.StartManipulation();
+            selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
+        }
+    }
+
+    private void CheckDeselectPiece()
+    {
+        if (Input.GetMouseButtonUp(0))
         {
             selectedPiece.StopManipulation();
             selectedPiece = null;
             EventManager.TriggerEvent(STOP_GRABBING, null);
         }
-        if (Input.GetKeyDown(KeyCode.R) && selectedPiece)
-        {
-            RotatePieceX();
-        }
-        if (Input.GetKeyDown(KeyCode.F) && selectedPiece)
-        {
-            RotatePieceY();
-        }
-
-        if (!selectedPiece) { return; }
-
-        selectedPiece.StartManipulation();
-        selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
     }
 
-    private void RotatePieceX()
+    private void CheckSelectPiece()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetMouseButtonDown(0))
         {
-            selectedPiece.Rotate(0, 90, 0);
-        }
-        else
-        {
-            selectedPiece.Rotate(0, -90, 0);
+            selectedPiece = getPiece();
+            if (!selectedPiece) { return; }
+            selectedPieceDistance = (Camera.main.transform.position - selectedPiece.transform.position).magnitude;
         }
     }
-    private void RotatePieceY()
+
+    private void CheckRotatePiece()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            selectedPiece.Rotate(0, 0, 90);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                selectedPiece.Rotate(0, 90, 0);
+            }
+            else
+            {
+                selectedPiece.Rotate(0, -90, 0);
+            }
         }
-        else
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            selectedPiece.Rotate(0, 0, -90);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                selectedPiece.Rotate(0, 0, 90);
+            }
+            else
+            {
+                selectedPiece.Rotate(0, 0, -90);
+            }
         }
     }
 }
