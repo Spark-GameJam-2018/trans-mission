@@ -16,6 +16,7 @@ public class GrabBehaviour : MonoBehaviour {
     Vector3 raycastHitPoint;
     Vector3 initialTargetPosition;
     Boolean lookingAtSnapPointMessageSent;
+    Boolean isMovingPieces;
 
     Piece getPiece()
     {
@@ -56,7 +57,7 @@ public class GrabBehaviour : MonoBehaviour {
     void Update () {
 
         SnapPoint snapPointRaycasted = getSnapPointByRaycast();
-        if (snapPointRaycasted)
+        if (!isMovingPieces && snapPointRaycasted)
         {
             if (!lookingAtSnapPointMessageSent)
             {
@@ -101,6 +102,7 @@ public class GrabBehaviour : MonoBehaviour {
 
     private void UpdatePiecePosition()
     {
+        isMovingPieces = true;
         selectedPiece.StartManipulation();
         Vector3 difference = (Camera.main.transform.position + Camera.main.transform.forward * selectedDistance) - raycastHitPoint;
         selectedPiece.GetTargetTransform().position = initialTargetPosition + difference;
@@ -122,6 +124,7 @@ public class GrabBehaviour : MonoBehaviour {
     {
         if (Input.GetMouseButtonUp(0))
         {
+            isMovingPieces = false;
             selectedPiece.StopManipulation();
             selectedPiece = null;
             EventManager.TriggerEvent(STOP_GRABBING, null);
