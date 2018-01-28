@@ -55,14 +55,16 @@ public class Piece : MonoBehaviour {
     internal void TransformConnectedNodes(Vector3 newLocation)
     {
         HashSet<Piece> connectedPieces = this.pieceGraph.GetConnectedNodes(this);
-
-        Vector3 translation = newLocation - this.transform.position;
         connectedPieces.Remove(this);
         foreach (var piece in connectedPieces)
         {
-            piece.transform.Translate(translation);
+            piece.transform.parent = this.transform;
         }
         this.transform.position = newLocation;
+        foreach (var piece in connectedPieces)
+        {
+            piece.transform.parent = this.transform.parent;
+        }
     }
 
     internal GraphNode<Piece> GetNode()

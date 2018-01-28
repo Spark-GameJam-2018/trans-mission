@@ -53,7 +53,6 @@ public class GrabBehaviour : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.LeftControl))
         {
-            // May want to include graph manipulation to support use cases of snapping parts of the graph to each other.
             selectedPiece.TransformConnectedNodes(Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance);
         }
         else
