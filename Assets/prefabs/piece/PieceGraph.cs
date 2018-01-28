@@ -43,30 +43,30 @@ public class PieceGraph : MonoBehaviour, IGraph<Piece> {
     /**
      * Time for some BFS Bois!!
      */
-    public HashSet<Piece> GetConnectedNodes(Piece start)
-    {
-        var visited = new HashSet<Piece>();
+    //public HashSet<Piece> GetConnectedNodes(Piece start)
+    //{
+    //    var visited = new HashSet<Piece>();
 
-        if (!Contains(start))
-            return visited;
+    //    if (!Contains(start))
+    //        return visited;
 
-        var stack = new Stack<Piece>();
-        stack.Push(start);
+    //    var stack = new Stack<Piece>();
+    //    stack.Push(start);
 
-        while (stack.Count > 0)
-        {
-            var vertex = stack.Pop();
+    //    while (stack.Count > 0)
+    //    {
+    //        var vertex = stack.Pop();
 
-            if (visited.Contains(vertex))
-                continue;
+    //        if (visited.Contains(vertex))
+    //            continue;
 
-            visited.Add(vertex);
+    //        visited.Add(vertex);
 
-            foreach (var neighbor in vertex.GetNode().Neighbors)
-                if (!visited.Contains(neighbor.Value))
-                    stack.Push(neighbor.Value);
-        }
+    //        foreach (var neighbor in vertex.GetNode().Neighbors)
+    //            if (!visited.Contains(neighbor.Value))
+    //                stack.Push(neighbor.Value);
+    //    }
 
-        return visited;
-    }
+    //    return visited;
+    //}
 }

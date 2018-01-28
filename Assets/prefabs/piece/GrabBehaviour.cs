@@ -8,7 +8,10 @@ public class GrabBehaviour : MonoBehaviour {
     public static string STOP_GRABBING = "STOP_GRABBING";
 
     Piece selectedPiece;
-    float selectedPieceDistance;
+    float selectedDistance;
+    float hitDistance;
+    Vector3 raycastHitPoint;
+    Vector3 initialTargetPosition;
 
     Piece getPiece()
     {
@@ -19,6 +22,9 @@ public class GrabBehaviour : MonoBehaviour {
 
         Piece piece = raycastHit.rigidbody.GetComponentInParent<Piece>();
         if (!piece) { return null; }
+
+        raycastHitPoint = raycastHit.point;
+        hitDistance = (raycastHit.point - Camera.main.transform.position).magnitude;
 
         return piece;
     }
@@ -51,14 +57,38 @@ public class GrabBehaviour : MonoBehaviour {
 
     private void UpdatePiecePosition()
     {
-        if (Input.GetKey(KeyCode.LeftControl))
+        //if (Input.GetKey(KeyCode.LeftControl))
+        //{
+        //    selectedPiece.TransformConnectedNodes(Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance);
+        //}
+        //else
+        //{
+        //    selectedPiece.StartManipulation();
+        //    selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
+        //}
+        selectedPiece.StartManipulation();
+        //GetTargetTransformForPiece(selectedPiece).position = Camera.main.transform.position + Camera.main.transform.forward * selectedDistance;
+        Vector3 difference = (Camera.main.transform.position + Camera.main.transform.forward * selectedDistance) - raycastHitPoint;
+        GetTargetTransformForPiece(selectedPiece).position = initialTargetPosition + difference;
+    }
+
+    private Transform GetTargetTransformForPiece(Piece selectedPiece)
+    {
+        if (selectedPiece.SnapGroup)
         {
-            selectedPiece.TransformConnectedNodes(Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance);
+            return selectedPiece.SnapGroup.transform;
         }
-        else
+        return selectedPiece.transform;
+    }
+
+    private void CheckSelectPiece()
+    {
+        if (Input.GetMouseButtonDown(0))
         {
-            selectedPiece.StartManipulation();
-            selectedPiece.transform.position = Camera.main.transform.position + Camera.main.transform.forward * selectedPieceDistance;
+            selectedPiece = getPiece();
+            if (!selectedPiece) { return; }
+            initialTargetPosition = GetTargetTransformForPiece(selectedPiece).position;
+            selectedDistance = (Camera.main.transform.position - raycastHitPoint).magnitude;
         }
     }
 
@@ -71,17 +101,7 @@ public class GrabBehaviour : MonoBehaviour {
             EventManager.TriggerEvent(STOP_GRABBING, null);
         }
     }
-
-    private void CheckSelectPiece()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            selectedPiece = getPiece();
-            if (!selectedPiece) { return; }
-            selectedPieceDistance = (Camera.main.transform.position - selectedPiece.transform.position).magnitude;
-        }
-    }
-
+    
     private void CheckRotatePiece()
     {
         if (Input.GetKeyDown(KeyCode.R))

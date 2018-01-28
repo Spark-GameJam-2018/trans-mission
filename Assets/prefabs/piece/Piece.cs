@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour {
 
+    public static string LINK_CREATED = "LINK_CREATED";
+
     public Collider[] snapPoints;
     private bool isBeingManipulated;
 
@@ -18,10 +20,20 @@ public class Piece : MonoBehaviour {
     // Node representing this piece in the graph.
     private GraphNode<Piece> node;
 
+    private SnapGroup snapGroup;
+
+    public SnapGroup SnapGroup
+    {
+        get
+        {
+            return GetComponentInParent<SnapGroup>();
+        }
+    }
+
     void Start ()
     {
-        pieceGraph = GetComponentInParent<PieceGraph>();
-        RegisterNode();
+        //pieceGraph = GetComponentInParent<PieceGraph>();
+        //RegisterNode();
         snapPoints = GetComponentsInChildren<Collider>();
 
         EventManager.StartListening(GrabBehaviour.STOP_GRABBING, StopGrabbingPieceHandler);
@@ -48,29 +60,29 @@ public class Piece : MonoBehaviour {
         if (!isBeingManipulated)
         {
             isBeingManipulated = true;
-            ResetNode();
+            //ResetNode();
         }
     }
 
-    internal void TransformConnectedNodes(Vector3 newLocation)
-    {
-        HashSet<Piece> connectedPieces = this.pieceGraph.GetConnectedNodes(this);
-        connectedPieces.Remove(this);
-        foreach (var piece in connectedPieces)
-        {
-            piece.transform.parent = this.transform;
-        }
-        this.transform.position = newLocation;
-        foreach (var piece in connectedPieces)
-        {
-            piece.transform.parent = this.transform.parent;
-        }
-    }
+    //internal void TransformConnectedNodes(Vector3 newLocation)
+    //{
+    //    HashSet<Piece> connectedPieces = this.pieceGraph.GetConnectedNodes(this);
+    //    connectedPieces.Remove(this);
+    //    foreach (var piece in connectedPieces)
+    //    {
+    //        piece.transform.parent = this.transform;
+    //    }
+    //    this.transform.position = newLocation;
+    //    foreach (var piece in connectedPieces)
+    //    {
+    //        piece.transform.parent = this.transform.parent;
+    //    }
+    //}
 
-    internal GraphNode<Piece> GetNode()
-    {
-        return this.node;
-    }
+    //internal GraphNode<Piece> GetNode()
+    //{
+    //    return this.node;
+    //}
 
     public void StopManipulation()
     {
@@ -84,17 +96,20 @@ public class Piece : MonoBehaviour {
     {
         if (potentialLink == null) { return; }
 
-        Piece targetPiece = potentialLink.target.ParentPiece;
+        //send event to create the link
+        EventManager.TriggerEvent(LINK_CREATED, potentialLink);
+
+        //Piece targetPiece = potentialLink.target.ParentPiece;
         //at this point we have our child piece that needs to be snapped
         //I will do this in a tree structure in order to use Unity's gameobject
         //hierarchy
 
         //targetPiece.transform.parent = potentialLink.origin.transform;
-        targetPiece.transform.position += potentialLink.origin.transform.position - potentialLink.target.transform.position;
+        //targetPiece.transform.position += potentialLink.origin.transform.position - potentialLink.target.transform.position;
 
-        // Add the edge to the graph
-        Debug.Log("Adding edge for node in graph...");
-        this.pieceGraph.AddUndirectedEdge(this.node, targetPiece.node, 0);
+        //// Add the edge to the graph
+        //Debug.Log("Adding edge for node in graph...");
+        //this.pieceGraph.AddUndirectedEdge(this.node, targetPiece.node, 0);
 
         potentialLink = null;
     }
@@ -136,24 +151,24 @@ public class Piece : MonoBehaviour {
         }
     }
 
-    /**
-     * Creates and registers this node in the graph of pieces.
-     */
-    private void RegisterNode()
-    {
-        this.node = new GraphNode<Piece>(this);
-        this.pieceGraph.AddNode(this.node);
-    }
+    ///**
+    // * Creates and registers this node in the graph of pieces.
+    // */
+    //private void RegisterNode()
+    //{
+    //    this.node = new GraphNode<Piece>(this);
+    //    this.pieceGraph.AddNode(this.node);
+    //}
 
-    /**
-     * Removes node from graph and adds it back.
-     * I know it's not optimal... I'm lazy.
-     */
-    private void ResetNode()
-    {
-        Debug.Log("Resetting node in graph...");
-        this.pieceGraph.Remove(this);
-        this.node = new GraphNode<Piece>(this);
-        this.pieceGraph.AddNode(this.node);
-    }
+    ///**
+    // * Removes node from graph and adds it back.
+    // * I know it's not optimal... I'm lazy.
+    // */
+    //private void ResetNode()
+    //{
+    //    Debug.Log("Resetting node in graph...");
+    //    this.pieceGraph.Remove(this);
+    //    this.node = new GraphNode<Piece>(this);
+    //    this.pieceGraph.AddNode(this.node);
+    //}
 }
